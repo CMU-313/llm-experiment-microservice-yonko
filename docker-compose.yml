@@ -1,0 +1,13 @@
+services:
+  translator:
+    build: .
+    container_name: translator-service
+    ports:
+      - "5000:5000"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:5000/?content=Dies%20ist%20eine%20Nachricht%20auf%20Deutsch"]
+      interval: 20s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
