@@ -17,8 +17,86 @@ _HARDCODED = {
     "This is an English message": ("This is an English message", True),
 }
 
-def _llm_translate_stub(content: str):
-    return None
+# translation.py
+import os
+try:
+    from ollama import Client  # optional; avoid failing import if package missing
+    _HAS_OLLAMA = True
+except Exception:
+    Client = None  # type: ignore
+    _HAS_OLLAMA = False
+
+# Host and model (can be overridden with env vars)
+OLLAMA_URL = os.getenv("OLLAMA_HOST", "localhost:11434")
+MODEL_NAME = os.getenv("OLLAMA_MODEL", "qwen3:0.6b")
+
+def get_translation(post: str) -> str:
+    context = """You are a strict translater. You receive an input string in any language, and 
+    you return the translation in English.
+    
+    Return ONLY the translated text in English, no extra words, no explanation, no newlines. 
+    Preserve punctuation exactly. 
+
+    Example 1:
+    Input: 'J'aime les nouilles'
+    Output: 'I like noodles'
+
+    Example 2:
+    Input: 'Hier ist dein erstes Beispiel.'
+    Output: 'Here is your first example.'
+
+    Here is the input: """ + post
+
+    # Create Ollama client lazily and handle connectivity failures
+    if not _HAS_OLLAMA:
+        print("ollama package not available; skipping LLM call")
+        return post
+
+    client = Client(host=OLLAMA_URL)
+    try:
+        response = client.chat(
+            model=MODEL_NAME,  # model name
+            messages=[
+                {
+                    "role": "user",
+                    "content": context
+                }
+            ]
+        )
+    except Exception as e:
+        print("Ollama request failed:", e)
+        return post
+
+    return response.message.content
+
+def get_language(post: str) -> str:
+    context = """You are a language classifier. Detect the language of the input text and reply only with the English name of that language:
+    Input Text: """ + post 
+
+    # Initialize the OpenAI client
+    client = Client(host=OLLAMA_URL)
+
+    # Make a request to your Ollama model, running on your Colab server
+    response = client.chat(
+        model=MODEL_NAME,  # model name
+        messages=[
+            {
+                "role": "user",
+                "content": context
+            }
+        ]
+    )
+
+    return response.message.content
+
+def _llm_translate_stub(post: str) -> tuple[bool, str]:
+    english = "english"
+    translation = get_translation(post)
+    language = get_language(post)
+    if language.lower() == english:
+        return (True, translation)
+    else:
+        return (False, translation)
 
 def translate_content(content: str) -> tuple[bool, str]:
     # Hardcoded response
@@ -29,12 +107,12 @@ def translate_content(content: str) -> tuple[bool, str]:
     # Future: call real LLM here
     # For checkpoint: call stub
     try:
-        candid = _llm_translate_stub(content)
+        res = _llm_translate_stub(content)
     except Exception:
-        candid = None
+        res = None
 
-    if isinstance(candid, tuple) and len(candid) == 2 and isinstance(candid[0], bool) and isinstance(candid[1], str):
-        return candid
-
-    # Fallback: treat as English, echo back
+    if isinstance(res, tuple) and len(res) == 2 and isinstance(res[0], bool) and isinstance(res[1], str):
+        return res
+    
+    # otherwise just leave it as is 
     return (True, content)
