@@ -39,11 +39,11 @@ def get_translation(post: str) -> str:
 
     Example 1:
     Input: 'J'aime les nouilles'
-    Output: 'I like noodles'
+    Your response is: 'I like noodles'
 
     Example 2:
     Input: 'Hier ist dein erstes Beispiel.'
-    Output: 'Here is your first example.'
+    Your response is: 'Here is your first example.'
 
     Here is the input: """ + post
 
@@ -115,4 +115,4 @@ def translate_content(content: str) -> tuple[bool, str]:
         return res
     
     # otherwise just leave it as is 
-    return (True, content)
+    return (True, content + "leave it as is")
