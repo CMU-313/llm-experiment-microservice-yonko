@@ -94,15 +94,15 @@ def _llm_translate_stub(post: str) -> tuple[bool, str]:
     translation = get_translation(post)
     language = get_language(post)
     if language.lower() == english:
-        return (True, translation)
+        return (True, translation + 'eng llm resp')
     else:
-        return (False, translation)
+        return (False, translation + 'not eng llm resp')
 
 def translate_content(content: str) -> tuple[bool, str]:
     # Hardcoded response
     if content in _HARDCODED:
         translated, is_english = _HARDCODED[content]
-        return (is_english, translated)
+        return (is_english, translated + 'hard coded')
 
     # Future: call real LLM here
     # For checkpoint: call stub
@@ -115,4 +115,4 @@ def translate_content(content: str) -> tuple[bool, str]:
         return res
     
     # otherwise just leave it as is 
-    return (True, content)
+    return (True, content + 'leave as is')
