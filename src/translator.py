@@ -27,7 +27,7 @@ except Exception:
     _HAS_OLLAMA = False
 
 # Host and model (can be overridden with env vars)
-OLLAMA_URL = os.getenv("OLLAMA_HOST", "http://127.0.0.1:11434")
+OLLAMA_URL = os.getenv("OLLAMA_HOST", "http://localhost:11434")
 MODEL_NAME = os.getenv("OLLAMA_MODEL", "qwen3:0.6b")
 
 def get_translation(post: str) -> str:
@@ -94,15 +94,15 @@ def _llm_translate_stub(post: str) -> tuple[bool, str]:
     translation = get_translation(post)
     language = get_language(post)
     if language.lower() == english:
-        return (True, translation + 'eng llm resp')
+        return (True, translation)
     else:
-        return (False, translation + 'not eng llm resp')
+        return (False, translation)
 
 def translate_content(content: str) -> tuple[bool, str]:
     # Hardcoded response
     if content in _HARDCODED:
         translated, is_english = _HARDCODED[content]
-        return (is_english, translated + 'hard coded')
+        return (is_english, translated)
 
     # Future: call real LLM here
     # For checkpoint: call stub
@@ -115,4 +115,4 @@ def translate_content(content: str) -> tuple[bool, str]:
         return res
     
     # otherwise just leave it as is 
-    return (True, content + 'leave as is')
+    return (True, content)
