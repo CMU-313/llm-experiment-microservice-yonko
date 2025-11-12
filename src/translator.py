@@ -92,6 +92,8 @@ def get_language(post: str) -> str:
 def _llm_translate_stub(post: str) -> tuple[bool, str]:
     english = "english"
     translation = get_translation(post)
+    if len(translation) > 6 and translation[-6:] == "\think":
+        translation = translatation[:-6]
     language = get_language(post)
     if language.lower() == english:
         return (True, translation)
