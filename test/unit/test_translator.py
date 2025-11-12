@@ -10,17 +10,17 @@ def test_known_english():
     assert is_english is True
     assert translated == "This is an English message"
 
-# def test_unknown_fallback():
-#     text = "Random unknown text 123"
-#     is_english, translated = translate_content(text)
-#     assert is_english is True
-#     assert translated == text
+def test_unknown_fallback():
+    # text = "Random unknown text 123"
+    # is_english, translated = translate_content(text)
+    # assert is_english is True
+    # assert translated == text
+    pass 
 
 def test_llm_normal_response():
-    # is_english, translated = translate_content("Hola, cómo estás")
-    # assert is_english is False
-    # assert translated == "Hi, how are you"
-    pass
+    is_english, translated = translate_content("Questo è un messaggio in italiano")
+    assert is_english is False
+    assert translated == "This is an Italian message"
 
 def test_llm_gibberish_response():
     pass
