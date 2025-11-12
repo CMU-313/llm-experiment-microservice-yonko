@@ -27,7 +27,7 @@ except Exception:
     _HAS_OLLAMA = False
 
 # Host and model (can be overridden with env vars)
-OLLAMA_URL = os.getenv("OLLAMA_HOST", "http://localhost:11434")
+OLLAMA_URL = os.getenv("OLLAMA_HOST", "http://128.2.220.239:11434")
 MODEL_NAME = os.getenv("OLLAMA_MODEL", "qwen3:0.6b")
 
 def get_translation(post: str) -> str:
